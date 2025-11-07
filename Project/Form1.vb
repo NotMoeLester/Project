@@ -66,12 +66,22 @@ Public Class Form1
 
             Dim sortedNumbers = numbers.OrderBy(Function(n) n).ToList()
 
-            ListBox1.Items.Clear()
-            For Each n In sortedNumbers
-                ListBox1.Items.Add(n)
-            Next
+            Using writer As New StreamWriter(filePath, False)
+                For Each n In sortedNumbers
+                    writer.WriteLine(n)
+                Next
+            End Using
 
-            File.WriteAllLines(filePath, sortedNumbers.Select(Function(n) n.ToString()))
+            ListBox1.Items.Clear()
+            Using reader As New StreamReader(filePath)
+                Dim line As String
+                line = reader.ReadLine()
+
+                While (line IsNot Nothing)
+                    ListBox1.Items.Add(line)
+                    line = reader.ReadLine()
+                End While
+            End Using
 
             MessageBox.Show("Data sorted and file updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
@@ -79,5 +89,4 @@ Public Class Form1
             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
-
 End Class
